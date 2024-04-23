@@ -27,8 +27,6 @@ local function insert_to_path(object, path, value)
   curr_obj[path[#path]] = value
 end
 
----@alias TSTextObjects.Predicate string[]
-
 ---@param query vim.treesitter.Query
 ---@param qnode TSNode
 ---@param bufnr integer
@@ -57,28 +55,24 @@ local function iter_prepared_matches(query, qnode, bufnr, start_row, end_row)
       end
     end
 
-    ---@type TSTextObjects.Predicate[]
-    local preds = query.info.patterns[pattern]
-    if preds then
-      for _, pred in pairs(preds) do
-        local predicate_name = pred[1]
-        local query_name = pred[2]
-        local start_node_name = pred[3]
-        local end_node_name = pred[4]
-        local path = vim.split(query_name, "%.")
-
-        if predicate_name == "make-range!" and type(query_name) == "string" and #pred == 4 then
-          local start_pos = match[start_node_name] and { match[start_node_name]:start(true) }
-            or { match[end_node_name]:start() }
-          local end_pos = match[end_node_name] and { match[end_node_name]:end_(true) }
-            or { match[start_node_name]:end_(true) }
-          insert_to_path(
-            prepared_match,
-            path,
-            M.Range:new(start_pos[1], start_pos[2], start_pos[3], end_pos[1], end_pos[2], end_pos[3], "-1", "-1")
-          )
-        end
-      end
+    if metadata.range and metadata.range[7] then
+      ---@cast metadata {range: {[1]: number, [2]: number, [3]: number, [4]: number, [5]: number, [6]: number, [7]: string}}
+      local query_name = metadata.range[7]
+      local path = vim.split(query_name, "%.")
+      insert_to_path(
+        prepared_match,
+        path,
+        M.Range:new(
+          metadata.range[1],
+          metadata.range[2],
+          metadata.range[3],
+          metadata.range[4],
+          metadata.range[5],
+          metadata.range[6],
+          "-1",
+          "-1"
+        )
+      )
     end
 
     return prepared_match
