@@ -27,7 +27,7 @@ local function insert_to_path(object, path, value)
   curr_obj[path[#path]] = value
 end
 
--- luacheck: push ignore 632
+-- luacheck: push ignore 631
 ---@alias TSTextObjects.Metadata {range: {[1]: number, [2]: number, [3]: number, [4]: number, [5]: number, [6]: number, [7]: string}}
 -- luacheck: pop
 
