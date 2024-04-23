@@ -27,6 +27,10 @@ local function insert_to_path(object, path, value)
   curr_obj[path[#path]] = value
 end
 
+-- luacheck: push ignore 632
+---@alias TSTextObjects.Metadata {range: {[1]: number, [2]: number, [3]: number, [4]: number, [5]: number, [6]: number, [7]: string}}
+-- luacheck: pop
+
 ---@param query vim.treesitter.Query
 ---@param qnode TSNode
 ---@param bufnr integer
@@ -56,7 +60,7 @@ local function iter_prepared_matches(query, qnode, bufnr, start_row, end_row)
     end
 
     if metadata.range and metadata.range[7] then
-      ---@cast metadata {range: {[1]: number, [2]: number, [3]: number, [4]: number, [5]: number, [6]: number, [7]: string}}
+      ---@cast metadata TSTextObjects.Metadata
       local query_name = metadata.range[7]
       local path = vim.split(query_name, "%.")
       insert_to_path(

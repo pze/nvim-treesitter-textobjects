@@ -1,5 +1,7 @@
 local ts = vim.treesitter
 
+---@alias TSTextObjects.Point3 {[1]: integer, [2]: integer, [3]: integer}
+
 ts.query.add_directive("make-range!", function(match, pattern, buf, predicate, metadata)
   local query_name = predicate[2]
   local start_node_id = predicate[3]
@@ -26,8 +28,10 @@ ts.query.add_directive("make-range!", function(match, pattern, buf, predicate, m
     end_range = metadata[end_node_id] and metadata[end_node_id].range or { end_node:range() }
   end
 
-  local start_pos = start_node and { start_node:start(true) } or { end_node:start(true) } ---@type {[1]: integer, [2]: integer, [3]: integer}
-  local end_pos = end_node and { end_node:end_(true) } or { start_node:end_(true) } ---@type {[1]: integer, [2]: integer, [3]: integer}
+  ---@type TSTextObjects.Point3
+  local start_pos = start_node and { start_node:start(true) } or { end_node:start(true) }
+  ---@type TSTextObjects.Point3
+  local end_pos = end_node and { end_node:end_(true) } or { start_node:end_(true) }
 
   local start_row = start_range and start_range[1] or start_pos[1]
   local start_col = start_range and start_range[2] or start_pos[2]
