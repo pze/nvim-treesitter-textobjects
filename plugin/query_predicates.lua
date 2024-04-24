@@ -10,21 +10,17 @@ ts.query.add_directive("make-range!", function(match, pattern, buf, predicate, m
   local start_nodes = match[start_node_id]
   local end_nodes = match[end_node_id]
 
-  assert(#start_nodes == 1, "#make-range! does not support captures on multiple nodes")
-  if end_nodes then
-    assert(#end_nodes == 1, "#make-range! does not support captures on multiple nodes")
-  end
-
   local start_node ---@type TSNode|nil
   local end_node ---@type TSNode|nil
   local start_range ---@type Range4|nil
   local end_range ---@type Range4|nil
+
   if start_nodes then
     start_node = start_nodes[1]
     start_range = metadata[start_node_id] and metadata[start_node_id].range or { start_node:range() }
   end
   if end_nodes then
-    end_node = end_nodes[1]
+    end_node = end_nodes[#end_nodes]
     end_range = metadata[end_node_id] and metadata[end_node_id].range or { end_node:range() }
   end
 
